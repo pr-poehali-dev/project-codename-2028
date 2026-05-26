@@ -16,7 +16,7 @@ def send_telegram(token: str, chat_id: str, text: str):
 
 
 def handler(event: dict, context) -> dict:
-    """Отправляет заявку или подарочный сертификат. action=lead — заявка в Telegram, action=gift — сертификат на email + уведомление в Telegram. SMTP: ssl port 465"""
+    """Отправляет заявку или подарочный сертификат. action=lead — заявка в Telegram, action=gift — сертификат на email + уведомление в Telegram."""
     if event.get('httpMethod') == 'OPTIONS':
         return {
             'statusCode': 200,
