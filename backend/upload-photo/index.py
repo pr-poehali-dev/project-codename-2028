@@ -21,6 +21,7 @@ def handler(event: dict, context) -> dict:
 
     body = json.loads(event.get('body', '{}'))
     data_url = body.get('file', '')
+    caption = body.get('caption', '')
 
     if not data_url:
         return {
@@ -48,7 +49,7 @@ def handler(event: dict, context) -> dict:
 
     conn = psycopg2.connect(os.environ['DATABASE_URL'])
     cur = conn.cursor()
-    cur.execute("INSERT INTO photos (url) VALUES (%s)", (cdn_url,))
+    cur.execute("INSERT INTO photos (url, caption) VALUES (%s, %s)", (cdn_url, caption))
     conn.commit()
     cur.close()
     conn.close()

@@ -18,12 +18,12 @@ def handler(event: dict, context) -> dict:
 
     conn = psycopg2.connect(os.environ['DATABASE_URL'])
     cur = conn.cursor()
-    cur.execute("SELECT url FROM photos ORDER BY created_at DESC")
+    cur.execute("SELECT url, caption FROM photos ORDER BY created_at DESC")
     rows = cur.fetchall()
     cur.close()
     conn.close()
 
-    photos = [row[0] for row in rows]
+    photos = [{'url': row[0], 'caption': row[1] or ''} for row in rows]
     print(f"Photos from DB: {len(photos)}")
 
     return {
