@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
+import { setTariff } from "@/lib/useTariff"
 
-const scrollToContact = () => {
+const scrollToContact = (tariff: string) => {
+  setTariff(tariff)
   document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
 }
 
@@ -78,7 +80,7 @@ const PricingSection = () => {
                   </li>
                 ))}
               </ul>
-              <Button onClick={scrollToContact} className="w-full bg-white/10 hover:bg-white/20 text-white rounded-full border-0 ring-1 ring-white/20">
+              <Button onClick={() => scrollToContact("2 часа — 7 000 ₽")} className="w-full bg-white/10 hover:bg-white/20 text-white rounded-full border-0 ring-1 ring-white/20">
                 Забронировать
               </Button>
             </div>
@@ -104,7 +106,7 @@ const PricingSection = () => {
                   </li>
                 ))}
               </ul>
-              <Button onClick={scrollToContact} className="w-full bg-black text-white hover:bg-black/80 rounded-full">
+              <Button onClick={() => scrollToContact("2–6 часов — 15 000 ₽")} className="w-full bg-black text-white hover:bg-black/80 rounded-full">
                 Забронировать
               </Button>
             </div>
@@ -127,7 +129,7 @@ const PricingSection = () => {
                   </li>
                 ))}
               </ul>
-              <Button onClick={scrollToContact} className="w-full bg-white/10 hover:bg-white/20 text-white rounded-full border-0 ring-1 ring-white/20">
+              <Button onClick={() => scrollToContact("12 часов — 25 000 ₽")} className="w-full bg-white/10 hover:bg-white/20 text-white rounded-full border-0 ring-1 ring-white/20">
                 Забронировать
               </Button>
             </div>

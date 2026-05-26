@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
 import { QRCodeSVG } from "qrcode.react"
+import { useTariff } from "@/lib/useTariff"
 
 const SEND_LEAD_URL = "https://functions.poehali.dev/3032647f-6050-4630-b3d7-0aec94db9389"
 
@@ -10,6 +11,7 @@ const ContactSection = () => {
   const [phone, setPhone] = useState("")
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const { tariff, clear } = useTariff()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -18,13 +20,14 @@ const ContactSection = () => {
       const res = await fetch(SEND_LEAD_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, message }),
+        body: JSON.stringify({ name, phone, message, tariff }),
       })
       if (!res.ok) throw new Error()
       setStatus("success")
       setName("")
       setPhone("")
       setMessage("")
+      clear()
     } catch {
       setStatus("error")
     }
@@ -44,6 +47,17 @@ const ContactSection = () => {
               {/* Left Column - Contact Form */}
               <div className="rounded-2xl bg-white/95 text-black p-8 shadow-2xl">
                 <h3 className="text-2xl font-bold mb-6">Оставить заявку</h3>
+                {tariff && status !== "success" && (
+                  <div className="mb-6 flex items-center justify-between gap-2 px-4 py-3 rounded-lg bg-gray-100 border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <Icon name="Tag" size={16} fallback="Tag" className="text-gray-500 shrink-0" />
+                      <span className="text-sm font-medium text-gray-700">Тариф: {tariff}</span>
+                    </div>
+                    <button onClick={clear} className="text-gray-400 hover:text-gray-600 transition-colors">
+                      <Icon name="X" size={14} fallback="X" />
+                    </button>
+                  </div>
+                )}
                 {status === "success" ? (
                   <div className="text-center py-8">
                     <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">

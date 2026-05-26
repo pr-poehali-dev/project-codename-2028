@@ -21,11 +21,14 @@ def handler(event: dict, context) -> dict:
     name = body.get('name', '').strip()
     phone = body.get('phone', '').strip()
     message = body.get('message', '').strip()
+    tariff = body.get('tariff', '').strip()
 
     token = os.environ['TELEGRAM_BOT_TOKEN']
     chat_id = '8944868733'
 
     text = f"📋 *Новая заявка с сайта*\n\n👤 Имя: {name}\n📞 Телефон: {phone}"
+    if tariff:
+        text += f"\n🏷 Тариф: {tariff}"
     if message:
         text += f"\n💬 Комментарий: {message}"
 
