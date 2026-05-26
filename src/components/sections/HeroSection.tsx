@@ -26,13 +26,20 @@ const HeroSection = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-1">
-          {["Маршруты", "Безопасность", "Галерея", "Вопросы", "Контакты"].map((item) => (
+          {[
+            { label: "Маршруты", id: "pricing" },
+            { label: "Безопасность", id: "faq" },
+            { label: "Галерея", id: "gallery" },
+            { label: "Вопросы", id: "faq" },
+            { label: "Контакты", id: "contact" },
+          ].map((item) => (
             <a
-              key={item}
-              href="#"
+              key={item.label}
+              href={`#${item.id}`}
+              onClick={(e) => { e.preventDefault(); document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" }) }}
               className="px-4 py-2 bg-black/40 ring-1 ring-white/20 backdrop-blur rounded-full hover:bg-black/50 transition-colors"
             >
-              {item}
+              {item.label}
             </a>
           ))}
         </div>
