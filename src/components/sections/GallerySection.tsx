@@ -55,14 +55,16 @@ const GallerySection = () => {
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return
     setUploading(true)
-    for (const file of Array.from(files)) {
-      const dataUrl = await compressImage(file)
-      await fetch(UPLOAD_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file: dataUrl }),
+    await Promise.all(
+      Array.from(files).map(async (file) => {
+        const dataUrl = await compressImage(file)
+        await fetch(UPLOAD_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ file: dataUrl }),
+        })
       })
-    }
+    )
     await loadPhotos()
     setUploading(false)
   }
