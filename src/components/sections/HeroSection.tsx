@@ -35,7 +35,7 @@ const HeroSection = () => {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{
-          backgroundImage: "url(https://cdn.poehali.dev/projects/701b977f-5121-46ae-a0cd-38f7c693e138/files/1b483104-0bc5-4e0a-9303-d11215575400.jpg)",
+          backgroundImage: "url(https://cdn.poehali.dev/projects/701b977f-5121-46ae-a0cd-38f7c693e138/files/6ea56908-decd-4352-9dc5-3c863277797c.jpg)",
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/90" />
@@ -157,16 +157,6 @@ const HeroSection = () => {
           >
             Смотреть маршруты
           </Button>
-        </div>
-
-        {/* Stats */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 mb-8">
-          {STATS.map((s, i) => (
-            <div key={i} className="flex flex-col items-center">
-              <span className="text-3xl font-black bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">{s.value}</span>
-              <span className="text-white/50 text-sm">{s.label}</span>
-            </div>
-          ))}
         </div>
 
         {/* Safety badge */}
