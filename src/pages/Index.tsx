@@ -362,15 +362,33 @@ const Index = () => {
                       <Icon name="Clock" size={18} fallback="Clock" />
                       <span className="text-sm">Туры ежедневно с 8:00 до 20:00</span>
                     </div>
-                    <div className="flex items-center gap-3 text-gray-700">
+                    <a href="tel:+79184411331" className="flex items-center gap-3 text-gray-700 hover:text-black transition-colors">
                       <Icon name="Phone" size={18} fallback="Phone" />
-                      <span className="text-sm">Ответим в течение часа</span>
-                    </div>
+                      <span className="text-sm">+7 918 441-13-31</span>
+                    </a>
+                    <a href="tel:+79884730006" className="flex items-center gap-3 text-gray-700 hover:text-black transition-colors">
+                      <Icon name="Phone" size={18} fallback="Phone" />
+                      <span className="text-sm">+7 988 473-00-06</span>
+                    </a>
+                    <a href="https://t.me/kvadronovo" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-black transition-colors">
+                      <Icon name="Send" size={18} fallback="Send" />
+                      <span className="text-sm">Telegram: @kvadronovo</span>
+                    </a>
                   </div>
-                  <Button className="w-full mt-6 bg-black text-white hover:bg-gray-800 rounded-lg flex items-center justify-center gap-2">
-                    <Icon name="Phone" size={16} fallback="Phone" />
-                    Позвонить нам
-                  </Button>
+                  <div className="flex gap-3 mt-6">
+                    <a href="tel:+79184411331" className="flex-1">
+                      <Button className="w-full bg-black text-white hover:bg-gray-800 rounded-lg flex items-center justify-center gap-2">
+                        <Icon name="Phone" size={16} fallback="Phone" />
+                        Позвонить
+                      </Button>
+                    </a>
+                    <a href="https://t.me/kvadronovo" target="_blank" rel="noopener noreferrer" className="flex-1">
+                      <Button className="w-full bg-blue-500 text-white hover:bg-blue-600 rounded-lg flex items-center justify-center gap-2">
+                        <Icon name="Send" size={16} fallback="Send" />
+                        Telegram
+                      </Button>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
