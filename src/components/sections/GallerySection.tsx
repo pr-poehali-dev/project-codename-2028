@@ -19,6 +19,8 @@ const GallerySection = () => {
   const [deletingUrl, setDeletingUrl] = useState<string | null>(null)
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
   const [captions, setCaptions] = useState<string[]>([])
+  const [editingCaption, setEditingCaption] = useState<{ url: string; value: string } | null>(null)
+  const [savingCaption, setSavingCaption] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const loadPhotos = async () => {
@@ -91,6 +93,7 @@ const GallerySection = () => {
   const exitAdmin = () => {
     setIsAdmin(false)
     sessionStorage.removeItem("admin_pwd")
+    setEditingCaption(null)
   }
 
   const confirmLogin = async () => {
@@ -115,10 +118,28 @@ const GallerySection = () => {
     await fetch(DELETE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: sessionStorage.getItem("admin_pwd") || "", url }),
+      body: JSON.stringify({ password: sessionStorage.getItem("admin_pwd") || "", url, action: "delete" }),
     })
     await loadPhotos()
     setDeletingUrl(null)
+  }
+
+  const saveCaption = async () => {
+    if (!editingCaption) return
+    setSavingCaption(true)
+    await fetch(DELETE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        password: sessionStorage.getItem("admin_pwd") || "",
+        url: editingCaption.url,
+        caption: editingCaption.value,
+        action: "update_caption",
+      }),
+    })
+    setPhotos((prev) => prev.map((p) => p.url === editingCaption.url ? { ...p, caption: editingCaption.value } : p))
+    setEditingCaption(null)
+    setSavingCaption(false)
   }
 
   return (
@@ -255,11 +276,49 @@ const GallerySection = () => {
                   loading="lazy"
                   onClick={() => !isAdmin && setLightbox(photo)}
                 />
-                {photo.caption && (
-                  <div className="px-3 py-2 bg-black/40 backdrop-blur-sm">
-                    <p className="text-white/90 text-sm">{photo.caption}</p>
-                  </div>
+
+                {/* Caption — view or edit */}
+                {isAdmin ? (
+                  editingCaption?.url === photo.url ? (
+                    <div className="px-3 py-2 bg-black/50 flex items-center gap-2">
+                      <input
+                        autoFocus
+                        type="text"
+                        value={editingCaption.value}
+                        onChange={(e) => setEditingCaption({ ...editingCaption, value: e.target.value })}
+                        onKeyDown={(e) => { if (e.key === "Enter") saveCaption(); if (e.key === "Escape") setEditingCaption(null) }}
+                        className="flex-1 bg-transparent text-white text-sm outline-none placeholder:text-white/30 min-w-0"
+                        placeholder="Подпись..."
+                      />
+                      <button onClick={saveCaption} disabled={savingCaption} className="text-green-400 hover:text-green-300 flex-shrink-0">
+                        {savingCaption ? <Icon name="Loader" size={14} fallback="Loader" className="animate-spin" /> : <Icon name="Check" size={14} fallback="Check" />}
+                      </button>
+                      <button onClick={() => setEditingCaption(null)} className="text-white/40 hover:text-white/70 flex-shrink-0">
+                        <Icon name="X" size={14} fallback="X" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setEditingCaption({ url: photo.url, value: photo.caption })}
+                      className="w-full text-left px-3 py-2 bg-black/40 hover:bg-black/60 transition-colors flex items-center gap-2 group/caption"
+                    >
+                      <span className="text-sm flex-1 min-w-0 truncate">
+                        {photo.caption
+                          ? <span className="text-white/90">{photo.caption}</span>
+                          : <span className="text-white/30 italic">Добавить подпись...</span>
+                        }
+                      </span>
+                      <Icon name="Pencil" size={12} fallback="Pencil" className="text-white/30 group-hover/caption:text-white/70 flex-shrink-0" />
+                    </button>
+                  )
+                ) : (
+                  photo.caption && (
+                    <div className="px-3 py-2 bg-black/40 backdrop-blur-sm">
+                      <p className="text-white/90 text-sm">{photo.caption}</p>
+                    </div>
+                  )
                 )}
+
                 {isAdmin && (
                   <button
                     onClick={() => deletePhoto(photo.url)}

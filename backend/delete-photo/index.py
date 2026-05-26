@@ -4,7 +4,7 @@ import boto3
 import psycopg2
 
 def handler(event: dict, context) -> dict:
-    """Удаляет фото из S3 и из БД. Требует пароль администратора."""
+    """Удаляет фото или обновляет подпись. action=delete|update_caption. Требует пароль администратора."""
     if event.get('httpMethod') == 'OPTIONS':
         return {
             'statusCode': 200,
@@ -20,6 +20,7 @@ def handler(event: dict, context) -> dict:
     body = json.loads(event.get('body', '{}'))
     password = body.get('password', '')
     url = body.get('url', '')
+    action = body.get('action', 'delete')
 
     if password != os.environ['ADMIN_PASSWORD']:
         return {
@@ -33,6 +34,21 @@ def handler(event: dict, context) -> dict:
             'statusCode': 400,
             'headers': {'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({'error': 'Не указан URL фото'})
+        }
+
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    cur = conn.cursor()
+
+    if action == 'update_caption':
+        caption = body.get('caption', '')
+        cur.execute("UPDATE photos SET caption = %s WHERE url = %s", (caption, url))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'ok': True})
         }
 
     # Delete from S3
@@ -49,8 +65,6 @@ def handler(event: dict, context) -> dict:
         print(f"S3 delete error (non-critical): {e}")
 
     # Delete from DB
-    conn = psycopg2.connect(os.environ['DATABASE_URL'])
-    cur = conn.cursor()
     cur.execute("DELETE FROM photos WHERE url = %s", (url,))
     conn.commit()
     cur.close()
