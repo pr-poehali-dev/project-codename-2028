@@ -33,7 +33,7 @@ const ContactSection = () => {
   return (
     <>
       {/* Contact Section */}
-      <section className="relative z-10 py-24 px-6">
+      <section id="contact" className="relative z-10 py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="rounded-3xl bg-black/20 ring-1 ring-white/15 backdrop-blur p-12">
             <div className="text-center mb-16">

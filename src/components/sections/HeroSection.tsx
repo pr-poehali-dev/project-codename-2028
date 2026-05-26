@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
 
+const scrollToContact = () => {
+  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+}
+
 const HeroSection = () => {
   return (
     <div className="relative min-h-screen">
@@ -38,7 +42,7 @@ const HeroSection = () => {
             <Icon name="MapPin" size={16} />
             <span className="text-sm">Новороссийск</span>
           </div>
-          <Button className="bg-white text-black hover:bg-white/90 rounded-full px-6">Забронировать</Button>
+          <Button onClick={scrollToContact} className="bg-white text-black hover:bg-white/90 rounded-full px-6">Забронировать</Button>
         </div>
       </nav>
 
@@ -55,7 +59,7 @@ const HeroSection = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-16">
-          <Button size="lg" className="bg-white text-black hover:bg-white/90 rounded-full px-8 py-4 text-lg">
+          <Button size="lg" onClick={scrollToContact} className="bg-white text-black hover:bg-white/90 rounded-full px-8 py-4 text-lg">
             Забронировать тур
           </Button>
           <Button

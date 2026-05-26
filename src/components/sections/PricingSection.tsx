@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
 
+const scrollToContact = () => {
+  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+}
+
 const included = ["Снаряжение (шлем, защита)", "Инструктаж", "Гид на маршруте", "Фотосессия в живописных местах"]
 
 const PricingSection = () => {
@@ -74,7 +78,7 @@ const PricingSection = () => {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full bg-white/10 hover:bg-white/20 text-white rounded-full border-0 ring-1 ring-white/20">
+              <Button onClick={scrollToContact} className="w-full bg-white/10 hover:bg-white/20 text-white rounded-full border-0 ring-1 ring-white/20">
                 Забронировать
               </Button>
             </div>
@@ -100,7 +104,7 @@ const PricingSection = () => {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full bg-black text-white hover:bg-black/80 rounded-full">
+              <Button onClick={scrollToContact} className="w-full bg-black text-white hover:bg-black/80 rounded-full">
                 Забронировать
               </Button>
             </div>
@@ -123,7 +127,7 @@ const PricingSection = () => {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full bg-white/10 hover:bg-white/20 text-white rounded-full border-0 ring-1 ring-white/20">
+              <Button onClick={scrollToContact} className="w-full bg-white/10 hover:bg-white/20 text-white rounded-full border-0 ring-1 ring-white/20">
                 Забронировать
               </Button>
             </div>

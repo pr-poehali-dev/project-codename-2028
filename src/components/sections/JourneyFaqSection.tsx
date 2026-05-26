@@ -2,6 +2,10 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
 
+const scrollToContact = () => {
+  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+}
+
 interface FAQ {
   question: string
   answer: string
@@ -95,6 +99,7 @@ const JourneyFaqSection = () => {
             <div className="text-center">
               <Button
                 size="lg"
+                onClick={scrollToContact}
                 className="bg-white text-black hover:bg-white/90 rounded-full px-12 py-4 text-lg font-semibold"
               >
                 Забронировать тур
