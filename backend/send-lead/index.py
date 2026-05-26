@@ -1,8 +1,10 @@
 import json
 import os
+import smtplib
 import urllib.request
-import urllib.error
 import urllib.parse
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 def send_telegram(token: str, chat_id: str, text: str):
@@ -13,27 +15,20 @@ def send_telegram(token: str, chat_id: str, text: str):
         resp.read()
 
 
-def send_email_brevo(to_email: str, to_name: str, subject: str, html: str):
-    api_key = os.environ['BREVO_API_KEY']
-    sender_email = os.environ['SMTP_USER']
-    payload = json.dumps({
-        'sender': {'name': 'Квадро Ново', 'email': sender_email},
-        'to': [{'email': to_email, 'name': to_name}],
-        'subject': subject,
-        'htmlContent': html
-    }).encode('utf-8')
-    req = urllib.request.Request(
-        'https://api.brevo.com/v3/smtp/email',
-        data=payload,
-        headers={
-            'api-key': api_key,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        method='POST'
-    )
-    with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read())
+def send_email_smtp(to_email: str, to_name: str, subject: str, html: str):
+    smtp_host = os.environ['SMTP_HOST']
+    smtp_user = os.environ['SMTP_USER']
+    smtp_pass = os.environ['SMTP_PASS']
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = f"Квадро Ново <{smtp_user}>"
+    msg['To'] = f"{to_name} <{to_email}>" if to_name else to_email
+    msg.attach(MIMEText(html, 'html', 'utf-8'))
+
+    with smtplib.SMTP_SSL(smtp_host, 465) as server:
+        server.login(smtp_user, smtp_pass)
+        server.sendmail(smtp_user, to_email, msg.as_string())
 
 
 def handler(event: dict, context) -> dict:
@@ -102,7 +97,7 @@ def handler(event: dict, context) -> dict:
 </body>
 </html>"""
 
-        send_email_brevo(
+        send_email_smtp(
             to_email=recipient_email,
             to_name=recipient_name or recipient_email,
             subject=f"Подарочный сертификат на {int(amount):,} ₽ — Квадро Ново",
