@@ -112,14 +112,17 @@ const GallerySection = () => {
             className="hidden"
             onChange={(e) => handleFiles(e.target.files)}
           />
-          <Button
-            onClick={() => inputRef.current?.click()}
-            disabled={uploading}
-            className="bg-white text-black hover:bg-white/90 rounded-full px-8 py-3 flex items-center gap-2"
-          >
-            <Icon name={uploading ? "Loader" : "Upload"} size={18} fallback="Upload" className={uploading ? "animate-spin" : ""} />
-            {uploading ? "Загрузка..." : "Добавить фото"}
-          </Button>
+
+          {isAdmin && (
+            <Button
+              onClick={() => inputRef.current?.click()}
+              disabled={uploading}
+              className="bg-white text-black hover:bg-white/90 rounded-full px-8 py-3 flex items-center gap-2"
+            >
+              <Icon name={uploading ? "Loader" : "Upload"} size={18} fallback="Upload" className={uploading ? "animate-spin" : ""} />
+              {uploading ? "Загрузка..." : "Добавить фото"}
+            </Button>
+          )}
 
           {!isAdmin && !showPasswordInput && (
             <button
@@ -164,11 +167,11 @@ const GallerySection = () => {
         {/* Grid */}
         {photos.length === 0 ? (
           <div
-            onClick={() => inputRef.current?.click()}
-            className="rounded-3xl border-2 border-dashed border-white/20 flex flex-col items-center justify-center py-24 gap-4 cursor-pointer hover:border-white/40 transition-colors"
+            onClick={() => isAdmin && inputRef.current?.click()}
+            className={`rounded-3xl border-2 border-dashed border-white/20 flex flex-col items-center justify-center py-24 gap-4 transition-colors ${isAdmin ? "cursor-pointer hover:border-white/40" : ""}`}
           >
             <Icon name="ImagePlus" size={48} fallback="ImagePlus" className="text-white/30" />
-            <p className="text-white/50 text-lg">Нажмите, чтобы загрузить первые фото</p>
+            <p className="text-white/50 text-lg">{isAdmin ? "Нажмите, чтобы загрузить первые фото" : "Фото появятся совсем скоро"}</p>
           </div>
         ) : (
           <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
