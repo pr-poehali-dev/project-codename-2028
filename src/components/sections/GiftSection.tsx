@@ -50,6 +50,13 @@ const GiftSection = () => {
                 +7 918 441-13-31
               </a>
               <a
+                href="tel:+79884730006"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-colors"
+              >
+                <Icon name="Phone" size={18} fallback="Phone" />
+                +7 988 473-00-06
+              </a>
+              <a
                 href="https://t.me/kvadronovo"
                 target="_blank"
                 rel="noopener noreferrer"
