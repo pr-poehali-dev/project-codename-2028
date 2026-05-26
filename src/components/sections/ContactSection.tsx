@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
+import { QRCodeSVG } from "qrcode.react"
 
 const ContactSection = () => {
   return (
@@ -115,6 +116,22 @@ const ContactSection = () => {
                         Telegram
                       </Button>
                     </a>
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t border-gray-200 flex items-center gap-4">
+                    <a href="https://t.me/kvadronovo" target="_blank" rel="noopener noreferrer" className="shrink-0">
+                      <QRCodeSVG
+                        value="https://t.me/kvadronovo"
+                        size={96}
+                        bgColor="#ffffff"
+                        fgColor="#000000"
+                        level="M"
+                      />
+                    </a>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">Написать в Telegram</p>
+                      <p className="text-xs text-gray-500 mt-1">Наведите камеру телефона на код — и сразу попадёте в наш чат</p>
+                    </div>
                   </div>
                 </div>
               </div>
