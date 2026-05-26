@@ -17,8 +17,6 @@ const scrollTo = (id: string) => {
 
 const STATS = [
   { value: "500+", label: "довольных райдеров" },
-  { value: "12", label: "маршрутов" },
-  { value: "5 лет", label: "опыта" },
 ]
 
 const HeroSection = () => {
@@ -37,7 +35,7 @@ const HeroSection = () => {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{
-          backgroundImage: "url(https://cdn.poehali.dev/projects/701b977f-5121-46ae-a0cd-38f7c693e138/files/79c35941-37e7-494d-abea-1f6e27aa41ab.jpg)",
+          backgroundImage: "url(https://cdn.poehali.dev/projects/701b977f-5121-46ae-a0cd-38f7c693e138/files/1dd3ee66-5b4d-49e8-ac85-c9ecafa60ed2.jpg)",
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/90" />
@@ -134,7 +132,7 @@ const HeroSection = () => {
         <h1 className="text-6xl md:text-9xl font-black tracking-tight mb-6 text-balance">
           <span className="bg-gradient-to-br from-white via-white to-white/60 bg-clip-text text-transparent">Квадро</span>
           <br />
-          <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">Ново.</span>
+          <span className="text-white">Ново.</span>
         </h1>
 
         <p className="text-xl md:text-2xl text-white/75 max-w-3xl mb-12 leading-relaxed text-pretty">
@@ -146,7 +144,7 @@ const HeroSection = () => {
           <Button
             size="lg"
             onClick={() => scrollTo("contact")}
-            className="bg-gradient-to-r from-amber-400 to-orange-500 text-black hover:from-amber-300 hover:to-orange-400 rounded-full px-10 py-4 text-lg font-bold shadow-2xl shadow-amber-500/40 hover:shadow-amber-500/60 transition-all hover:scale-105"
+            className="bg-white text-black hover:bg-white/90 rounded-full px-10 py-4 text-lg font-bold shadow-2xl shadow-black/40 transition-all hover:scale-105"
           >
             <Icon name="Zap" size={20} className="mr-2" />
             Забронировать тур
