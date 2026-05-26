@@ -13,7 +13,6 @@ const GiftSection = () => {
   const [selected, setSelected] = useState<number | null>(null)
   const [custom, setCustom] = useState("")
 
-  const [recipientEmail, setRecipientEmail] = useState("")
   const [recipientName, setRecipientName] = useState("")
   const [senderName, setSenderName] = useState("")
   const [phone, setPhone] = useState("")
@@ -28,7 +27,7 @@ const GiftSection = () => {
       const res = await fetch(SEND_GIFT_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: 'gift', recipient_email: recipientEmail, recipient_name: recipientName, sender_name: senderName, phone, amount }),
+        body: JSON.stringify({ action: 'gift', recipient_name: recipientName, sender_name: senderName, phone, amount }),
       })
       if (!res.ok) throw new Error()
       setStatus("success")
@@ -77,9 +76,9 @@ const GiftSection = () => {
                 <Icon name="CheckCircle" size={32} fallback="CheckCircle" className="text-white" />
               </div>
               <p className="text-2xl font-bold mb-2">Сертификат отправлен!</p>
-              <p className="text-white/50 mb-6">Письмо с сертификатом на {amount.toLocaleString("ru")} ₽ отправлено на {recipientEmail}</p>
+              <p className="text-white/50 mb-6">Заявка на сертификат {amount.toLocaleString("ru")} ₽ принята — мы свяжемся с вами для подтверждения</p>
               <button
-                onClick={() => { setStatus("idle"); setStep("amount"); setRecipientEmail(""); setRecipientName(""); setSenderName(""); setPhone(""); setSelected(null); setCustom("") }}
+                onClick={() => { setStatus("idle"); setStep("amount"); setRecipientName(""); setSenderName(""); setPhone(""); setSelected(null); setCustom("") }}
                 className="text-sm text-white/40 underline"
               >
                 Оформить ещё один
@@ -135,18 +134,6 @@ const GiftSection = () => {
                 <Icon name="ArrowLeft" size={14} fallback="ArrowLeft" />
                 Сумма: {amount.toLocaleString("ru")} ₽
               </button>
-
-              <div>
-                <label className="block text-sm text-white/50 mb-2">Email получателя *</label>
-                <input
-                  type="email"
-                  required
-                  value={recipientEmail}
-                  onChange={(e) => setRecipientEmail(e.target.value)}
-                  placeholder="ivanova@example.com"
-                  className="w-full px-5 py-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none focus:border-white/40 placeholder:text-white/20"
-                />
-              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
