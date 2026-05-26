@@ -5,6 +5,7 @@ import Icon from "@/components/ui/icon"
 const NAV_ITEMS = [
   { label: "Маршруты", id: "pricing" },
   { label: "Безопасность", id: "safety" },
+  { label: "Сертификаты", id: "gift" },
   { label: "Галерея", id: "gallery" },
   { label: "Вопросы", id: "faq" },
   { label: "Контакты", id: "contact" },
