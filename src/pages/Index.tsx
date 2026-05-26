@@ -57,7 +57,7 @@ const Index = () => {
           {/* Logo */}
           <div className="flex items-center gap-2 px-4 py-2 bg-black/40 ring-1 ring-white/20 backdrop-blur rounded-full">
             <Icon name="Compass" size={20} />
-            <span className="font-medium text-balance">Moto Novorossiysk</span>
+            <span className="font-medium text-balance">Квадро Нову</span>
           </div>
 
           {/* Navigation Links */}
@@ -349,7 +349,7 @@ const Index = () => {
                       <Icon name="Compass" size={28} fallback="Compass" />
                     </div>
                     <div>
-                      <h4 className="text-lg font-semibold">Moto Novorossiysk</h4>
+                      <h4 className="text-lg font-semibold">Квадро Нову</h4>
                       <p className="text-gray-600">Туры на квадроциклах</p>
                     </div>
                   </div>
@@ -388,7 +388,7 @@ const Index = () => {
               <div className="lg:col-span-2">
                 <div className="flex items-center gap-2 mb-6">
                   <Icon name="Compass" size={24} />
-                  <span className="text-xl font-semibold">Moto Novorossiysk</span>
+                  <span className="text-xl font-semibold">Квадро Нову</span>
                 </div>
                 <p className="text-white/80 leading-relaxed text-pretty">
                   Туры на квадроциклах по Новороссийску и Черноморскому побережью. Яркие впечатления, надёжная техника и опытные гиды для всей семьи.
@@ -455,7 +455,7 @@ const Index = () => {
 
             {/* Sub-footer */}
             <div className="border-t border-white/10 pt-8">
-              <p className="text-white/60 text-sm text-center">© 2025 Moto Novorossiysk — Туры на квадроциклах</p>
+              <p className="text-white/60 text-sm text-center">© 2025 Квадро Нову — Туры на квадроциклах</p>
             </div>
           </div>
         </div>
