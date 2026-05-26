@@ -30,22 +30,37 @@ const GallerySection = () => {
 
   useEffect(() => { loadPhotos() }, [])
 
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      const url = URL.createObjectURL(file)
+      img.onload = () => {
+        const MAX = 1600
+        let { width, height } = img
+        if (width > MAX || height > MAX) {
+          if (width > height) { height = Math.round(height * MAX / width); width = MAX }
+          else { width = Math.round(width * MAX / height); height = MAX }
+        }
+        const canvas = document.createElement("canvas")
+        canvas.width = width
+        canvas.height = height
+        canvas.getContext("2d")!.drawImage(img, 0, 0, width, height)
+        URL.revokeObjectURL(url)
+        resolve(canvas.toDataURL("image/jpeg", 0.85))
+      }
+      img.src = url
+    })
+  }
+
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return
     setUploading(true)
     for (const file of Array.from(files)) {
-      const reader = new FileReader()
-      await new Promise<void>((resolve) => {
-        reader.onload = async (e) => {
-          const dataUrl = e.target?.result as string
-          await fetch(UPLOAD_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ file: dataUrl }),
-          })
-          resolve()
-        }
-        reader.readAsDataURL(file)
+      const dataUrl = await compressImage(file)
+      await fetch(UPLOAD_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file: dataUrl }),
       })
     }
     await new Promise((r) => setTimeout(r, 1500))
