@@ -45,7 +45,8 @@ def handler(event: dict, context) -> dict:
         aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
     )
     s3.put_object(Bucket='files', Key=key, Body=file_data, ContentType=content_type)
-    print(f"uploaded to S3: {key}")
+    access_key_preview = os.environ['AWS_ACCESS_KEY_ID'][:8]
+    print(f"uploaded to S3: {key}, access_key: {access_key_preview}...")
 
     cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
 

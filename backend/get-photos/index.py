@@ -23,7 +23,10 @@ def handler(event: dict, context) -> dict:
         aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
     )
 
+    access_key_preview = os.environ['AWS_ACCESS_KEY_ID'][:8]
+    print(f"Using access_key: {access_key_preview}...")
     response = s3.list_objects_v2(Bucket='files', Prefix='gallery/')
+    print(f"list response KeyCount: {response.get('KeyCount')}, IsTruncated: {response.get('IsTruncated')}")
     contents = response.get('Contents', [])
     print(f"S3 objects count: {len(contents)}, keys: {[o['Key'] for o in contents]}")
 
