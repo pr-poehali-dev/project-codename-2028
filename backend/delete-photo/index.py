@@ -1,9 +1,10 @@
 import json
 import os
 import boto3
+import psycopg2
 
 def handler(event: dict, context) -> dict:
-    """Удаляет фото из S3 галереи. Требует пароль администратора."""
+    """Удаляет фото из S3 и из БД. Требует пароль администратора."""
     if event.get('httpMethod') == 'OPTIONS':
         return {
             'statusCode': 200,
@@ -18,7 +19,7 @@ def handler(event: dict, context) -> dict:
 
     body = json.loads(event.get('body', '{}'))
     password = body.get('password', '')
-    key = body.get('key', '')
+    url = body.get('url', '')
 
     if password != os.environ['ADMIN_PASSWORD']:
         return {
@@ -27,20 +28,33 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps({'error': 'Неверный пароль'})
         }
 
-    if not key or not key.startswith('gallery/'):
+    if not url:
         return {
             'statusCode': 400,
             'headers': {'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Некорректный ключ файла'})
+            'body': json.dumps({'error': 'Не указан URL фото'})
         }
 
-    s3 = boto3.client(
-        's3',
-        endpoint_url='https://bucket.poehali.dev',
-        aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
-    )
-    s3.delete_object(Bucket='files', Key=key)
+    # Delete from S3
+    try:
+        key = url.split('/bucket/')[-1]
+        s3 = boto3.client(
+            's3',
+            endpoint_url='https://bucket.poehali.dev',
+            aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
+        )
+        s3.delete_object(Bucket='files', Key=key)
+    except Exception as e:
+        print(f"S3 delete error (non-critical): {e}")
+
+    # Delete from DB
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    cur = conn.cursor()
+    cur.execute("DELETE FROM photos WHERE url = %s", (url,))
+    conn.commit()
+    cur.close()
+    conn.close()
 
     return {
         'statusCode': 200,

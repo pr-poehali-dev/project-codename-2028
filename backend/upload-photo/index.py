@@ -3,9 +3,10 @@ import os
 import base64
 import uuid
 import boto3
+import psycopg2
 
 def handler(event: dict, context) -> dict:
-    """Загружает фото тура в S3 и возвращает публичный URL"""
+    """Загружает фото в S3 и сохраняет URL в БД"""
     if event.get('httpMethod') == 'OPTIONS':
         return {
             'statusCode': 200,
@@ -18,10 +19,8 @@ def handler(event: dict, context) -> dict:
             'body': ''
         }
 
-    print(f"body length: {len(event.get('body', '') or '')}")
     body = json.loads(event.get('body', '{}'))
     data_url = body.get('file', '')
-    print(f"data_url length: {len(data_url)}, starts with: {data_url[:50] if data_url else 'EMPTY'}")
 
     if not data_url:
         return {
@@ -34,7 +33,6 @@ def handler(event: dict, context) -> dict:
     content_type = header.split(':')[1].split(';')[0]
     ext = content_type.split('/')[1]
     file_data = base64.b64decode(encoded)
-    print(f"content_type: {content_type}, file_data size: {len(file_data)}")
 
     key = f"gallery/{uuid.uuid4()}.{ext}"
 
@@ -45,21 +43,17 @@ def handler(event: dict, context) -> dict:
         aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
     )
     s3.put_object(Bucket='files', Key=key, Body=file_data, ContentType=content_type)
-    access_key_preview = os.environ['AWS_ACCESS_KEY_ID'][:8]
-    print(f"uploaded to S3: {key}, access_key: {access_key_preview}...")
-
-    # Verify file exists right after upload
-    try:
-        head = s3.head_object(Bucket='files', Key=key)
-        print(f"head_object OK: size={head['ContentLength']}")
-    except Exception as e:
-        print(f"head_object FAILED: {e}")
-
-    # List gallery right after upload
-    verify = s3.list_objects_v2(Bucket='files', Prefix='gallery/')
-    print(f"list after upload: count={verify.get('KeyCount')}, keys={[o['Key'] for o in verify.get('Contents', [])]}")
 
     cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
+
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    cur = conn.cursor()
+    cur.execute("INSERT INTO photos (url) VALUES (%s)", (cdn_url,))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    print(f"Saved photo to DB: {cdn_url}")
 
     return {
         'statusCode': 200,

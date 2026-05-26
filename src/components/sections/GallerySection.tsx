@@ -63,7 +63,6 @@ const GallerySection = () => {
         body: JSON.stringify({ file: dataUrl }),
       })
     }
-    await new Promise((r) => setTimeout(r, 1500))
     await loadPhotos()
     setUploading(false)
   }
@@ -82,7 +81,7 @@ const GallerySection = () => {
     const res = await fetch(DELETE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password, key: "gallery/__check__" }),
+      body: JSON.stringify({ password, url: "__check__" }),
     })
     if (res.status === 403) {
       setPasswordError(true)
@@ -96,13 +95,11 @@ const GallerySection = () => {
   }
 
   const deletePhoto = async (url: string) => {
-    const key = urlToKey(url)
-    if (!key) return
     setDeletingUrl(url)
     await fetch(DELETE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: sessionStorage.getItem("admin_pwd") || "", key }),
+      body: JSON.stringify({ password: sessionStorage.getItem("admin_pwd") || "", url }),
     })
     await loadPhotos()
     setDeletingUrl(null)

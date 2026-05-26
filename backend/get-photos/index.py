@@ -1,9 +1,9 @@
 import json
 import os
-import boto3
+import psycopg2
 
 def handler(event: dict, context) -> dict:
-    """Возвращает список фото галереи из S3"""
+    """Возвращает список фото из БД"""
     if event.get('httpMethod') == 'OPTIONS':
         return {
             'statusCode': 200,
@@ -16,29 +16,15 @@ def handler(event: dict, context) -> dict:
             'body': ''
         }
 
-    s3 = boto3.client(
-        's3',
-        endpoint_url='https://bucket.poehali.dev',
-        aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
-    )
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    cur = conn.cursor()
+    cur.execute("SELECT url FROM photos ORDER BY created_at DESC")
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
 
-    access_key = os.environ['AWS_ACCESS_KEY_ID']
-
-    # List without prefix first to see all objects
-    response = s3.list_objects_v2(Bucket='files')
-    all_contents = response.get('Contents', [])
-    print(f"All objects in bucket: {[o['Key'] for o in all_contents]}")
-
-    # Filter gallery items in Python
-    contents = [o for o in all_contents if o['Key'].startswith('gallery/') and o['Key'] != 'gallery/']
-    print(f"Gallery objects: {[o['Key'] for o in contents]}")
-
-    photos = [
-        f"https://cdn.poehali.dev/projects/{access_key}/bucket/{obj['Key']}"
-        for obj in sorted(contents, key=lambda x: x['LastModified'], reverse=True)
-    ]
-    print(f"Photos URLs count: {len(photos)}")
+    photos = [row[0] for row in rows]
+    print(f"Photos from DB: {len(photos)}")
 
     return {
         'statusCode': 200,
