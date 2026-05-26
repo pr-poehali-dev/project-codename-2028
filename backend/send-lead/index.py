@@ -15,8 +15,7 @@ def send_telegram(token: str, chat_id: str, text: str):
         resp.read()
 
 
-def send_email_smtp(to_email: str, to_name: str, subject: str, html: str):
-    smtp_host = os.environ['SMTP_HOST']
+def send_email_mailru(to_email: str, to_name: str, subject: str, html: str):
     smtp_user = os.environ['SMTP_USER']
     smtp_pass = os.environ['SMTP_PASS']
 
@@ -26,7 +25,9 @@ def send_email_smtp(to_email: str, to_name: str, subject: str, html: str):
     msg['To'] = f"{to_name} <{to_email}>" if to_name else to_email
     msg.attach(MIMEText(html, 'html', 'utf-8'))
 
-    with smtplib.SMTP_SSL(smtp_host, 465) as server:
+    with smtplib.SMTP('smtp.mail.ru', 587) as server:
+        server.ehlo()
+        server.starttls()
         server.login(smtp_user, smtp_pass)
         server.sendmail(smtp_user, to_email, msg.as_string())
 
@@ -97,7 +98,7 @@ def handler(event: dict, context) -> dict:
 </body>
 </html>"""
 
-        send_email_smtp(
+        send_email_mailru(
             to_email=recipient_email,
             to_name=recipient_name or recipient_email,
             subject=f"Подарочный сертификат на {int(amount):,} ₽ — Квадро Ново",
