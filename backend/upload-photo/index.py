@@ -48,6 +48,17 @@ def handler(event: dict, context) -> dict:
     access_key_preview = os.environ['AWS_ACCESS_KEY_ID'][:8]
     print(f"uploaded to S3: {key}, access_key: {access_key_preview}...")
 
+    # Verify file exists right after upload
+    try:
+        head = s3.head_object(Bucket='files', Key=key)
+        print(f"head_object OK: size={head['ContentLength']}")
+    except Exception as e:
+        print(f"head_object FAILED: {e}")
+
+    # List gallery right after upload
+    verify = s3.list_objects_v2(Bucket='files', Prefix='gallery/')
+    print(f"list after upload: count={verify.get('KeyCount')}, keys={[o['Key'] for o in verify.get('Contents', [])]}")
+
     cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
 
     return {
