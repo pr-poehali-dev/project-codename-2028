@@ -81,8 +81,8 @@ def handler(event: dict, context) -> dict:
 </body>
 </html>"""
 
-        smtp_host = os.environ['SMTP_HOST']
-        smtp_port = int(os.environ.get('SMTP_PORT', '465'))
+        smtp_host = 'smtp.mail.ru'
+        smtp_port = 465
         smtp_user = os.environ['SMTP_USER']
         smtp_pass = os.environ['SMTP_PASS']
 
