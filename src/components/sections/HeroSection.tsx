@@ -35,7 +35,7 @@ const HeroSection = () => {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{
-          backgroundImage: "url(https://cdn.poehali.dev/projects/701b977f-5121-46ae-a0cd-38f7c693e138/bucket/gallery/2243c388-472d-4c01-8820-bc81b08be3bc.jpeg)",
+          backgroundImage: "url(https://cdn.poehali.dev/projects/701b977f-5121-46ae-a0cd-38f7c693e138/files/183e930b-715c-4303-bf97-ef4c3aaf9ef9.jpg)",
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/90" />
@@ -119,8 +119,17 @@ const HeroSection = () => {
         </div>
       )}
 
+      {/* Quad bike image */}
+      <div className="absolute bottom-0 right-0 z-10 w-[55%] max-w-2xl pointer-events-none select-none">
+        <img
+          src="https://cdn.poehali.dev/projects/701b977f-5121-46ae-a0cd-38f7c693e138/bucket/gallery/2243c388-472d-4c01-8820-bc81b08be3bc.jpeg"
+          alt="Loncin квадроцикл"
+          className="w-full h-auto object-contain drop-shadow-2xl"
+        />
+      </div>
+
       {/* Hero Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-6 text-center md:items-start md:pl-16 md:text-left">
 
         {/* Badge */}
         <div className="mb-8 inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/40 backdrop-blur rounded-full">
