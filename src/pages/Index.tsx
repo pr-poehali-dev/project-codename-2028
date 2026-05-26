@@ -375,11 +375,17 @@ const Index = () => {
                       <span className="text-sm">Telegram: @kvadronovo</span>
                     </a>
                   </div>
-                  <div className="flex gap-3 mt-6">
+                  <div className="flex gap-2 mt-6">
                     <a href="tel:+79184411331" className="flex-1">
                       <Button className="w-full bg-black text-white hover:bg-gray-800 rounded-lg flex items-center justify-center gap-2">
                         <Icon name="Phone" size={16} fallback="Phone" />
                         Позвонить
+                      </Button>
+                    </a>
+                    <a href="https://wa.me/79184411331" target="_blank" rel="noopener noreferrer" className="flex-1">
+                      <Button className="w-full bg-green-500 text-white hover:bg-green-600 rounded-lg flex items-center justify-center gap-2">
+                        <Icon name="MessageCircle" size={16} fallback="MessageCircle" />
+                        WhatsApp
                       </Button>
                     </a>
                     <a href="https://t.me/kvadronovo" target="_blank" rel="noopener noreferrer" className="flex-1">
