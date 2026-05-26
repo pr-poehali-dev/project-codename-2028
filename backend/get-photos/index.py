@@ -23,20 +23,22 @@ def handler(event: dict, context) -> dict:
         aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
     )
 
-    access_key_preview = os.environ['AWS_ACCESS_KEY_ID'][:8]
-    print(f"Using access_key: {access_key_preview}...")
-    response = s3.list_objects_v2(Bucket='files', Prefix='gallery/')
-    print(f"list response KeyCount: {response.get('KeyCount')}, IsTruncated: {response.get('IsTruncated')}")
-    contents = response.get('Contents', [])
-    print(f"S3 objects count: {len(contents)}, keys: {[o['Key'] for o in contents]}")
-
     access_key = os.environ['AWS_ACCESS_KEY_ID']
+
+    # List without prefix first to see all objects
+    response = s3.list_objects_v2(Bucket='files')
+    all_contents = response.get('Contents', [])
+    print(f"All objects in bucket: {[o['Key'] for o in all_contents]}")
+
+    # Filter gallery items in Python
+    contents = [o for o in all_contents if o['Key'].startswith('gallery/') and o['Key'] != 'gallery/']
+    print(f"Gallery objects: {[o['Key'] for o in contents]}")
+
     photos = [
         f"https://cdn.poehali.dev/projects/{access_key}/bucket/{obj['Key']}"
         for obj in sorted(contents, key=lambda x: x['LastModified'], reverse=True)
-        if obj['Key'] != 'gallery/'
     ]
-    print(f"Photos URLs: {photos}")
+    print(f"Photos URLs count: {len(photos)}")
 
     return {
         'statusCode': 200,
