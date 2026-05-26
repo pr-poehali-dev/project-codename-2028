@@ -23,7 +23,7 @@ const GallerySection = () => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const loadPhotos = async () => {
-    const res = await fetch(GET_URL)
+    const res = await fetch(GET_URL, { cache: "no-store" })
     const data = await res.json()
     setPhotos(data.photos || [])
   }
@@ -48,6 +48,7 @@ const GallerySection = () => {
         reader.readAsDataURL(file)
       })
     }
+    await new Promise((r) => setTimeout(r, 1500))
     await loadPhotos()
     setUploading(false)
   }
