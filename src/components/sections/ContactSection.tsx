@@ -1,8 +1,35 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
 import { QRCodeSVG } from "qrcode.react"
 
+const SEND_LEAD_URL = "https://functions.poehali.dev/3032647f-6050-4630-b3d7-0aec94db9389"
+
 const ContactSection = () => {
+  const [name, setName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [message, setMessage] = useState("")
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus("loading")
+    try {
+      const res = await fetch(SEND_LEAD_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone, message }),
+      })
+      if (!res.ok) throw new Error()
+      setStatus("success")
+      setName("")
+      setPhone("")
+      setMessage("")
+    } catch {
+      setStatus("error")
+    }
+  }
+
   return (
     <>
       {/* Contact Section */}
@@ -17,44 +44,64 @@ const ContactSection = () => {
               {/* Left Column - Contact Form */}
               <div className="rounded-2xl bg-white/95 text-black p-8 shadow-2xl">
                 <h3 className="text-2xl font-bold mb-6">Оставить заявку</h3>
-                <form className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium mb-2">
-                      Имя
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Ваше имя"
-                    />
+                {status === "success" ? (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                      <Icon name="CheckCircle" size={32} fallback="CheckCircle" className="text-green-600" />
+                    </div>
+                    <p className="text-xl font-semibold text-gray-800 mb-2">Заявка отправлена!</p>
+                    <p className="text-gray-500 text-sm">Мы перезвоним вам в течение часа</p>
+                    <button onClick={() => setStatus("idle")} className="mt-6 text-sm text-gray-400 underline">Отправить ещё</button>
                   </div>
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium mb-2">
-                      Телефон
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="+7 (900) 000-00-00"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium mb-2">
-                      Комментарий
-                    </label>
-                    <textarea
-                      id="message"
-                      rows={4}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                      placeholder="Сколько человек, желаемая дата..."
-                    />
-                  </div>
-                  <Button className="w-full bg-black text-white hover:bg-gray-800 rounded-lg py-3 font-normal text-base">
-                    Отправить заявку
-                  </Button>
-                </form>
+                ) : (
+                  <form className="space-y-6" onSubmit={handleSubmit}>
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium mb-2">Имя</label>
+                      <input
+                        type="text"
+                        id="name"
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Ваше имя"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium mb-2">Телефон</label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        value={phone}
+                        onChange={e => setPhone(e.target.value)}
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="+7 (900) 000-00-00"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium mb-2">Комментарий</label>
+                      <textarea
+                        id="message"
+                        rows={4}
+                        value={message}
+                        onChange={e => setMessage(e.target.value)}
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        placeholder="Сколько человек, желаемая дата..."
+                      />
+                    </div>
+                    {status === "error" && (
+                      <p className="text-red-500 text-sm">Не удалось отправить заявку. Попробуйте позже.</p>
+                    )}
+                    <Button
+                      type="submit"
+                      disabled={status === "loading"}
+                      className="w-full bg-black text-white hover:bg-gray-800 rounded-lg py-3 font-normal text-base"
+                    >
+                      {status === "loading" ? "Отправка..." : "Отправить заявку"}
+                    </Button>
+                  </form>
+                )}
               </div>
 
               {/* Right Column - Contact Info */}
@@ -169,9 +216,9 @@ const ContactSection = () => {
               </div>
 
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider mb-6">О НАС</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider mb-6">КОМПАНИЯ</h3>
                 <ul className="space-y-3">
-                  {["О компании", "Безопасность", "Команда", "Партнёрам"].map((item) => (
+                  {["О нас", "Контакты", "Отзывы", "FAQ"].map((item) => (
                     <li key={item}>
                       <a href="#" className="text-white/70 hover:text-white transition-colors text-sm leading-relaxed">
                         {item}
@@ -182,35 +229,32 @@ const ContactSection = () => {
               </div>
 
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider mb-6">ПОДДЕРЖКА</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider mb-6">КОНТАКТЫ</h3>
                 <ul className="space-y-3">
-                  {["Контакты", "Вопросы и ответы", "Бронирование", "Условия"].map((item) => (
-                    <li key={item}>
-                      <a href="#" className="text-white/70 hover:text-white transition-colors text-sm leading-relaxed">
-                        {item}
-                      </a>
-                    </li>
-                  ))}
+                  <li>
+                    <a href="tel:+79184411331" className="text-white/70 hover:text-white transition-colors text-sm leading-relaxed">
+                      +7 918 441-13-31
+                    </a>
+                  </li>
+                  <li>
+                    <a href="tel:+79884730006" className="text-white/70 hover:text-white transition-colors text-sm leading-relaxed">
+                      +7 988 473-00-06
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://t.me/kvadronovo" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors text-sm leading-relaxed">
+                      @kvadronovo
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
 
-            <div className="border-t border-white/10 pt-12 mb-12">
-              <div className="max-w-md">
-                <h3 className="text-lg font-semibold mb-4">Новости и акции</h3>
-                <div className="flex gap-3">
-                  <input
-                    type="email"
-                    placeholder="Введите ваш email"
-                    className="flex-1 px-4 py-3 rounded-lg bg-white/5 ring-1 ring-white/20 backdrop-blur border-0 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/30 focus:outline-none"
-                  />
-                  <Button className="bg-white text-black hover:bg-white/90 rounded-lg px-6 h-[50px]">Подписаться</Button>
-                </div>
+            <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="text-white/40 text-sm">© 2024 Квадро Ново. Все права защищены.</p>
+              <div className="flex items-center gap-6">
+                <a href="#" className="text-white/40 hover:text-white/70 transition-colors text-sm">Политика конфиденциальности</a>
               </div>
-            </div>
-
-            <div className="border-t border-white/10 pt-8">
-              <p className="text-white/60 text-sm text-center">© 2025 Квадро Ново — Туры на квадроциклах</p>
             </div>
           </div>
         </div>
