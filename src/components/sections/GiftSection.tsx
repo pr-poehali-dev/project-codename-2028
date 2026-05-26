@@ -1,43 +1,24 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
 import { setTariff } from "@/lib/useTariff"
 
-const scrollToContact = (label: string) => {
-  setTariff(label)
+const PRESETS = [2000, 5000, 10000, 15000]
+
+const scrollToContact = (amount: number) => {
+  setTariff(`Подарочный сертификат на ${amount.toLocaleString("ru")} ₽`)
   document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
 }
 
-const CERTIFICATES = [
-  {
-    icon: "Bike",
-    title: "Лёгкий старт",
-    subtitle: "2 часа на квадроцикле",
-    price: "3 500 ₽",
-    features: ["Маршрут для новичков", "Полная экипировка", "Инструктаж"],
-    highlight: false,
-  },
-  {
-    icon: "Mountain",
-    title: "Горное приключение",
-    subtitle: "Полный день на трассе",
-    price: "7 500 ₽",
-    features: ["Маршрут среднего уровня", "Полная экипировка", "Гид весь день", "Обед на природе"],
-    highlight: true,
-  },
-  {
-    icon: "Star",
-    title: "VIP-тур",
-    subtitle: "Эксклюзивный маршрут",
-    price: "14 000 ₽",
-    features: ["Личный маршрут", "Полная экипировка", "Персональный гид", "Обед + фотосессия"],
-    highlight: false,
-  },
-]
-
 const GiftSection = () => {
+  const [selected, setSelected] = useState<number | null>(null)
+  const [custom, setCustom] = useState("")
+
+  const amount = custom ? parseInt(custom.replace(/\D/g, "")) || 0 : selected || 0
+
   return (
     <section id="gift" className="relative z-10 py-24 px-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm text-white/70 mb-6">
             <Icon name="Gift" size={16} fallback="Gift" />
@@ -47,73 +28,74 @@ const GiftSection = () => {
             Подари незабываемое
           </h2>
           <p className="text-xl text-white/70 max-w-2xl mx-auto text-pretty">
-            Лучший подарок — это впечатление. Сертификат действует 12 месяцев, именной, в красивом оформлении.
+            Выбери любую сумму — получатель сам выберет маршрут, а сертификат покроет стоимость полностью или частично.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {CERTIFICATES.map((cert) => (
-            <div
-              key={cert.title}
-              className={`relative rounded-2xl p-6 flex flex-col gap-5 transition-colors ${
-                cert.highlight
-                  ? "bg-white text-black"
-                  : "bg-white/5 border border-white/10 hover:bg-white/8 hover:border-white/20"
-              }`}
-            >
-              {cert.highlight && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-black text-white text-xs font-semibold">
-                  Популярный
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-8 md:p-12">
+          {/* Preset amounts */}
+          <p className="text-white/50 text-sm mb-4">Популярные суммы</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            {PRESETS.map((val) => (
+              <button
+                key={val}
+                onClick={() => { setSelected(val); setCustom("") }}
+                className={`rounded-xl py-4 text-lg font-semibold transition-colors border ${
+                  selected === val && !custom
+                    ? "bg-white text-black border-white"
+                    : "bg-white/5 text-white border-white/10 hover:bg-white/10 hover:border-white/20"
+                }`}
+              >
+                {val.toLocaleString("ru")} ₽
+              </button>
+            ))}
+          </div>
+
+          {/* Custom amount */}
+          <p className="text-white/50 text-sm mb-3">Или введи свою сумму</p>
+          <div className="relative mb-8">
+            <input
+              type="text"
+              inputMode="numeric"
+              value={custom}
+              onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, "")
+                setCustom(digits)
+                if (digits) setSelected(null)
+              }}
+              placeholder="Например, 8 000"
+              className="w-full px-5 py-4 rounded-xl bg-white/5 border border-white/10 text-white text-lg outline-none focus:border-white/40 placeholder:text-white/20 pr-14"
+            />
+            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-white/40 text-lg">₽</span>
+          </div>
+
+          {/* How it works */}
+          <div className="flex flex-col md:flex-row gap-4 mb-8 text-sm text-white/60">
+            {[
+              { icon: "Gift", text: "Покупаешь сертификат на нужную сумму" },
+              { icon: "Map", text: "Получатель выбирает любой маршрут" },
+              { icon: "CircleMinus", text: "Сумма сертификата вычитается из стоимости" },
+            ].map((step, i) => (
+              <div key={i} className="flex items-start gap-3 flex-1">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Icon name={step.icon} size={16} fallback="Info" className="text-white/60" />
                 </div>
-              )}
-
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${cert.highlight ? "bg-black/10" : "bg-white/10"}`}>
-                <Icon name={cert.icon} size={24} fallback="Gift" className={cert.highlight ? "text-black" : "text-white"} />
+                <span>{step.text}</span>
               </div>
+            ))}
+          </div>
 
-              <div>
-                <h3 className={`text-xl font-bold mb-1 ${cert.highlight ? "text-black" : "text-white"}`}>{cert.title}</h3>
-                <p className={`text-sm ${cert.highlight ? "text-black/60" : "text-white/50"}`}>{cert.subtitle}</p>
-              </div>
+          <Button
+            onClick={() => amount >= 500 && scrollToContact(amount)}
+            disabled={amount < 500}
+            className="w-full py-6 text-lg rounded-xl bg-white text-black hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            {amount >= 500
+              ? `Заказать сертификат на ${amount.toLocaleString("ru")} ₽`
+              : "Выбери сумму сертификата"}
+          </Button>
 
-              <ul className="flex flex-col gap-2 flex-1">
-                {cert.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm">
-                    <Icon name="Check" size={14} fallback="Check" className={cert.highlight ? "text-black/70" : "text-white/50"} />
-                    <span className={cert.highlight ? "text-black/80" : "text-white/70"}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="flex items-end justify-between mt-2">
-                <span className={`text-2xl font-bold ${cert.highlight ? "text-black" : "text-white"}`}>{cert.price}</span>
-                <Button
-                  onClick={() => scrollToContact(`Сертификат «${cert.title}»`)}
-                  className={`rounded-full px-5 ${
-                    cert.highlight
-                      ? "bg-black text-white hover:bg-black/80"
-                      : "bg-white text-black hover:bg-white/90"
-                  }`}
-                >
-                  Заказать
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom note */}
-        <div className="flex flex-wrap justify-center gap-6 text-sm text-white/50">
-          {[
-            { icon: "Clock", text: "Действует 12 месяцев" },
-            { icon: "FileText", text: "Именной сертификат" },
-            { icon: "Send", text: "Доставка на email или почтой" },
-          ].map((item) => (
-            <div key={item.text} className="flex items-center gap-2">
-              <Icon name={item.icon} size={16} fallback="Info" className="text-white/40" />
-              {item.text}
-            </div>
-          ))}
+          <p className="text-center text-white/30 text-xs mt-4">Сертификат действует 12 месяцев · Доставка на email</p>
         </div>
       </div>
     </section>
