@@ -25,6 +25,7 @@ def handler(event: dict, context) -> dict:
 
     response = s3.list_objects_v2(Bucket='files', Prefix='gallery/')
     contents = response.get('Contents', [])
+    print(f"S3 objects count: {len(contents)}, keys: {[o['Key'] for o in contents]}")
 
     access_key = os.environ['AWS_ACCESS_KEY_ID']
     photos = [
@@ -32,6 +33,7 @@ def handler(event: dict, context) -> dict:
         for obj in sorted(contents, key=lambda x: x['LastModified'], reverse=True)
         if obj['Key'] != 'gallery/'
     ]
+    print(f"Photos URLs: {photos}")
 
     return {
         'statusCode': 200,
